@@ -1,0 +1,2 @@
+# ChessAI
+minimax pra xadrez
