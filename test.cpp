@@ -1,8 +1,6 @@
 #include <iostream>
 
-int board[9];
-
-int boardResult() {
+int boardResult(int board[9]) {
     int sum;
     for (int i=0; i<3; i++) {
         // line
@@ -26,7 +24,7 @@ int boardResult() {
     return 0;
 }
 
-void printBoard() {
+void printBoard(int board[9]) {
     char c;
     for (int i=0; i<3; i++) {
         printf("| ");
@@ -50,7 +48,7 @@ void printBoard() {
     }
 }
 
-int askPlayer() {
+int askPlayer(int board[9]) {
     int line, column, pos;
     do {
         printf("Enter your line column (0..2 0..2): ");
@@ -60,21 +58,54 @@ int askPlayer() {
     return pos;
 }
 
-int minimax(int board[9], ) {
-
+int minimax(int board[9], int currPlayerTurn) {
+    int winner = boardResult(board);
+    if (winner != 0) return winner;
+    //
+    int move = -1;
+    int bestScore = 0;
+    int score, pos;
+    //
+    for (pos=0; pos < 9; pos++) {
+        if (board[pos] == 0) {    // Empty espace
+            board[pos] = currPlayerTurn;
+            score = -minimax(board, -currPlayerTurn);
+            if (score > bestScore) {
+                bestScore = score;
+                move = pos;
+            }
+            board[pos] = 0;     // Reset change to the board after testing
+        }
+    }
+    return bestScore;
 }
 
-int askAi() {
-    int line, column, pos;
-    do {
-        printf("Bot: ");
-        scanf("%d %d", &line, &column);
-        pos = (line * 3 + column);
-    } while (line > 2 || line < 0 || column > 2 || column < 0 || board[pos] != 0);
-    return pos;
+int askAi(int board[9]) {
+    int currPlayerTurn = -1;    // -1 for IA's turn
+    int move = -1;
+    int bestScore = -2; // Losing is preferred than not moving
+    int score, pos;
+
+    for (pos=0; pos<9; pos++) {
+        if (board[pos] == 0) {    // Empty espace
+            board[pos] = currPlayerTurn;
+            score = -minimax(board, currPlayerTurn);
+            if (score > bestScore) {
+                bestScore = score;
+                move = pos;
+            }
+            board[pos] = 0;     // Reset change to the board after testing
+        }
+    }
+
+    return move;
 }
 
 int main() {
+    int board[9] = {0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0};
+
     int playerTurn;
     do {
         printf("Do you wanna play 1st or 2nd (1 or 2): ");
@@ -82,22 +113,23 @@ int main() {
     } while (playerTurn < 1 || playerTurn > 2);
     playerTurn -= 1;
 
-    printBoard();
+    printBoard(board);
 
     int winner = 0;
     for (int turn=0; turn<9 && winner == 0; turn++) {
         if (turn%2 == playerTurn) {
-            // X = 1st      O = 2nd
-            board[askPlayer()] = 1;
+            // player always plays 1 = X
+            board[askPlayer(board)] = 1;
         } else {
+            // ia always plays -1 = O
             printf("IA's turn\n");
-            board[askAi()] = -1;
+            board[askAi(board)] = -1;
         }
-        printGrid();
+        printBoard(board);
         //
-        winner = boardResult();
-        printf("winner: %d\n", winner);
-        if (winner != 0) { break; }
+        winner = boardResult(board);
+        // printf("winner: %d\n", winner);
+        if (winner != 0) break;
     }
 
     switch (winner) {
@@ -105,10 +137,10 @@ int main() {
             printf("Draw\n");
             break;
         case 1:
-            printf("You win :)\n");
+            printf("You won :)\n");
             break;
         case -1:
-            printf("You lose :(\n");
+            printf("You lost :(\n");
             break;
     }
 
