@@ -81,67 +81,54 @@ void getPositionFromOneHot(ulint *piece, int positions[]) {
     }
 }
 
-int positions[8];
+int positions[16];
 void printBoard() {
-    int i;
     char board[64];
-
-    for (i=0; i<8; i++) {
-        printf("|");
-        for (int j=0; j<8; j++) {
-            printf(" %d |", i*8 + j);
-        }
-        printf("\n");
-    }
-    printf("\n");
-
     for (i=0; i<64; i++)
         board[i] = '-';
 
-    getPositionFromOneHot(&white_pawns, positions);
-    for (i=0; i<8; i++)
-        board[positions[i]] = 'p';
-    getPositionFromOneHot(&black_pawns, positions);
-    for (i=0; i<8; i++)
-        board[positions[i]] = 'P';
-    //
-    getPositionFromOneHot(&white_rooks, positions);
-    for (i=0; i<2; i++) {
-        printf("%d\n", positions[i]);
-        board[positions[i]] = 'r';
-    }
-    getPositionFromOneHot(&black_rooks, positions);
-    for (i=0; i<2; i++) {
-        printf("%d\n", positions[i]);
-        board[positions[i]] = 'R';
-    }
-    //
-    getPositionFromOneHot(&white_knights, positions);
-    for (i=0; i<2; i++)
-        board[positions[i]] = 'n';
-    getPositionFromOneHot(&black_knights, positions);
-    for (i=0; i<2; i++)
-        board[positions[i]] = 'N';
-    //
-    getPositionFromOneHot(&white_bishops, positions);
-    for (i=0; i<2; i++)
-        board[positions[i]] = 'b';
-    getPositionFromOneHot(&black_bishops, positions);
-    for (i=0; i<2; i++)
-        board[positions[i]] = 'B';
-    //
-    getPositionFromOneHot(&white_queens, positions);
-    for (i=0; i<1; i++)
-        board[positions[i]] = 'q';
-    getPositionFromOneHot(&black_queens, positions);
-    for (i=0; i<1; i++)
-        board[positions[i]] = 'Q';
-    //
-    getPositionFromOneHot(&white_king, positions);
-        board[positions[0]] = 'k';
-    getPositionFromOneHot(&black_king, positions);
-        board[positions[0]] = 'K';
+    int i;
 
+        // for (i=0; i<8; i++) {
+            //     printf("|");
+            //     for (int j=0; j<8; j++) {
+                //         printf(" %d |", i*8 + j);
+                //     }
+                //     printf("\n");
+                // }
+                // printf("\n");
+
+    getPositionFromOneHot(&white_pawns, &positions[0]);
+    getPositionFromOneHot(&black_pawns, &positions[8]);
+    for (i=0; i<8; i++) {
+        board[positions[i]] = 'p';
+        board[positions[i+8]] = 'P';
+    }
+    //
+    getPositionFromOneHot(&white_rooks,   &positions[0]);
+    getPositionFromOneHot(&black_rooks,   &positions[2]);
+    getPositionFromOneHot(&white_knights, &positions[4]);
+    getPositionFromOneHot(&black_knights, &positions[6]);
+    getPositionFromOneHot(&white_bishops, &positions[8]);
+    getPositionFromOneHot(&black_bishops, &positions[10]);
+    for (i=0; i<2; i++) {
+        board[positions[i]]     = 'r';
+        board[positions[i+2]]   = 'R';
+        board[positions[i+4]]   = 'n';
+        board[positions[i+6]]   = 'N';
+        board[positions[i+8]]   = 'b';
+        board[positions[i+10]]  = 'B';
+    }
+    //
+    getPositionFromOneHot(&white_queens, &positions[0]);
+    getPositionFromOneHot(&black_queens, &positions[1]);
+    board[positions[0]]  = 'q';
+    board[positions[1]]  = 'Q';
+    getPositionFromOneHot(&white_king, &positions[0]);
+    getPositionFromOneHot(&black_king, &positions[1]);
+    board[positions[0]] = 'k';
+    board[positions[1]] = 'K';
+    // print
     for (i=7; i>=0; i--) {
         printf("|");
         for (int j=0; j<8; j++) {
